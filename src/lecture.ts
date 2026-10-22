@@ -423,7 +423,7 @@ export const lecture:LectureStep[]=[
     "kind": "slide",
     "key": "lecture/Z00/next",
     "section": "Z00",
-    "title": "Что дальше",
+    "title": "От геометрии к кадру",
     "lead": "От одного треугольника — к целому кадру",
     "visual": "next",
     "terms": [],

@@ -5,7 +5,7 @@ import {atlasColors} from './SceneView';
 import {FragmentsSlide,WeightsSlide} from './RasterDemos';
 import {OutputFlowSlide,DepthSlide,BlendSlide,FramebufferSlide} from './OutputDemos';
 import {vec,fmt} from './ui';
-export function SectionRibbon({current,onSelect}:{current:LessonId;onSelect:(id:LessonId)=>void}){return <nav className="pipeline-ribbon" aria-label="Разделы лекции">{lessons.map((l,i)=><button key={l.id} className={l.id==='G00'?'preparation-stage':undefined} aria-current={l.id===current?'true':undefined} onClick={()=>onSelect(l.id)}><span>{i+1}. {l.tag}</span><strong>{l.title}</strong></button>)}</nav>}
+export function SectionRibbon({current,onSelect}:{current:LessonId;onSelect:(id:LessonId)=>void}){return <nav className="pipeline-ribbon" aria-label="Разделы материала">{lessons.map((l,i)=><button key={l.id} className={l.id==='G00'?'preparation-stage':undefined} aria-current={l.id===current?'true':undefined} onClick={()=>onSelect(l.id)}><span>{i+1}. {l.tag}</span><strong>{l.title}</strong></button>)}</nav>}
 function Axis({from,to,color,label}:{from:number[];to:number[];color:string;label:string}){const dx=to[0]-from[0],dy=to[1]-from[1],l=Math.hypot(dx,dy),ux=dx/l,uy=dy/l,head=`${to[0]},${to[1]} ${to[0]-ux*9-uy*4.5},${to[1]-uy*9+ux*4.5} ${to[0]-ux*9+uy*4.5},${to[1]-uy*9-ux*4.5}`;return <g className="axis"><line x1={from[0]} y1={from[1]} x2={to[0]-ux*6} y2={to[1]-uy*6} stroke={color}/><polygon points={head} fill={color}/><text x={to[0]+ux*11} y={to[1]+uy*11+4} style={{fill:color}}>{label}</text></g>}
 export const faceVertices=[...triangle.positions.map(p=>[...p]),[-.5,.5,.5]],faceTriangles=[[0,1,2],[0,2,3]],faceNames='ABCD';
 const facePoint=(i:number)=>[210+faceVertices[i][0]/.5*100,150-faceVertices[i][1]/.5*100];
@@ -56,7 +56,7 @@ function GraphicsPipeline(){const X=(i:number)=>40+138*i,C=(i:number)=>X(i)+58,M
 {gpStages.map(([lines,en,kind],i)=><GpBox key={en} x={X(i)} y={170} lines={lines} en={en} kind={kind}/>)}
 {[0,7].map(i=><ellipse key={i} className="gp-ring" cx={C(i)} cy={M} rx="80" ry="72"/>)}
 <g className="gp-legend" transform="translate(470 330)"><rect className="gp-legend-frame" x="0" y="0" width="330" height="104" rx="4"/>{([['prog','Программируемые'],['conf','Настраиваемые'],['fixed','С фиксированной функциональностью']] as const).map(([k,t],i)=><g key={k} className={'gp-'+k} transform={`translate(12 ${12+i*30})`}><rect width="30" height="20" rx="3"/><text className="gp-legend-text" x="42" y="15">{t}</text></g>)}</g>
-<g className="gp-legend" transform="translate(830 330)"><ellipse className="gp-ring" cx="22" cy="20" rx="18" ry="14"/><text className="gp-legend-text" x="50" y="25">Программы этой лекции</text><text className="gp-legend-text" x="0" y="66">* Необязательная стадия</text></g>
+<g className="gp-legend" transform="translate(830 330)"><ellipse className="gp-ring" cx="22" cy="20" rx="18" ry="14"/><text className="gp-legend-text" x="50" y="25">Выбранные программы</text><text className="gp-legend-text" x="0" y="66">* Необязательная стадия</text></g>
 </svg></div>}
 function Figure({s}:{s:Slide}){switch(s.visual){
 case 'cover':return <p className="cover-course">Основы программирования компьютерных игр<br/>на различных игровых движках</p>;

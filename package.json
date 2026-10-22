@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "node scripts/compile-shaders.mjs --verify && tsc -b && vite build",
-    "shaders": "node scripts/compile-shaders.mjs",
+    "build": "node scripts/compile-shaders.mjs --verify && node scripts/compile-multipass.mjs --verify && tsc -b && vite build",
+    "shaders": "node scripts/compile-shaders.mjs && node scripts/compile-multipass.mjs",
     "typecheck": "tsc -b",
     "preview": "vite preview --host 127.0.0.1",
-    "qa": "node scripts/verify-pipeline.mjs && node scripts/verify-slides.mjs"
+    "qa": "node scripts/verify-frame.mjs && node scripts/verify-pipeline.mjs && node scripts/verify-slides.mjs",
+    "qa:frame": "node scripts/verify-frame.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",
