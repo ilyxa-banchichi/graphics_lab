@@ -6,6 +6,7 @@ cbuffer ObjectFrame : register(b0) {
  float4 baseColor;
  float4 lightSettings; // angle, number of lights, shadows enabled, shadow bias
  float4 objectSettings; // output mode, emissive strength, reserved, instanced
+ float4 shadowFiltering; // inverse shadow size xy, PCF radius in texels, enabled
 };
 Texture2D shadowMap : register(t0);
 SamplerState shadowSampler : register(s0);
@@ -37,17 +38,26 @@ float3 Surface(Output i) {
  if(baseColor.a<0) c*=0.72+0.28*fmod(floor(i.world.x*2)+floor(i.world.z*2)+100,2);
  return c;
 }
-float Visibility(float3 world) {
+float ShadowVisibility(float3 world) {
  if(lightSettings.z<0.5) return 1;
  float4 p=mul(lightFromWorld,float4(world,1));float3 q=p.xyz/p.w*0.5+0.5;
  if(any(q<0)||any(q>1)) return 1;
- float stored=shadowMap.Sample(shadowSampler,q.xy).r;
- return q.z-lightSettings.w<=stored?1:0.15;
+ if(shadowFiltering.w<0.5) return q.z-lightSettings.w<=shadowMap.SampleLevel(shadowSampler,q.xy,0).r?1:0.15;
+ // PCF averages visibility comparisons, not the stored depth values.
+ float visibility=0;
+ [unroll] for(int y=-1;y<=1;y++) {
+  [unroll] for(int x=-1;x<=1;x++) {
+   float2 uv=q.xy+float2(x,y)*shadowFiltering.xy*shadowFiltering.z;
+   float stored=shadowMap.SampleLevel(shadowSampler,uv,0).r;
+   visibility+=q.z-lightSettings.w<=stored?1:0.15;
+  }
+ }
+ return visibility/9.0;
 }
 float3 Shade(float3 base,float3 n,float3 world,float emission) {
  n=normalize(n);float a=lightSettings.x;
  float3 l=normalize(float3(sin(a),1.5,cos(a)));
- float3 c=base*(0.12+max(0,dot(n,l))*Visibility(world));
+ float3 c=base*(0.12+max(0,dot(n,l))*ShadowVisibility(world));
  for(int k=1;k<4;k++) {
   if(k>=lightSettings.y) break;
   float3 d=normalize(float3(cos(k*2.1),0.65,sin(k*2.1)));
